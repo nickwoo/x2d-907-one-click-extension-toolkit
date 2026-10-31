@@ -394,5 +394,19 @@
   "未安装对焦速度选择，拒绝修改": "Focus speed selection is not installed; change refused.",
   "对焦速度档位安装包校验失败": "Focus speed level package verification failed.",
   "0.4.12 基线清单校验失败": "Original 0.4.12 manifest verification failed.",
-  "可选择低、中、高三档加速；可安装，但不建议老镜头用户在相机内开启该功能。": "Choose Low, Medium or High acceleration. Installation is available; older-lens users are advised to keep this feature off on the camera."
+  "可选择低、中、高三档加速；可安装，但不建议老镜头用户在相机内开启该功能。": "Choose Low, Medium or High acceleration. Installation is available; older-lens users are advised to keep this feature off on the camera.",
+  "镜头配置文件": "Lens profile",
+  "返回": "Back",
+  "主开关": "Master",
+  "开": "On",
+  "关": "Off",
+  "光圈": "Aperture",
+  "对焦距离": "Focus distance",
+  "超焦距": "Hyperfocal",
+  "近点": "Near",
+  "远点": "Far",
+  "景深": "Depth",
+  "取景框线": "Frame lines",
+  "未选择镜头配置文件": "No lens profile selected",
+  "状态": "Status"
 }
