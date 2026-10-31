@@ -29,11 +29,12 @@ QtObject {
     property string pendingSelectId: ""
     property bool initialSyncDone: false
     signal selectionConfirmed()
-    // PROVISIONAL circle of confusion, 0.025 mm. This MUST be confirmed
-    // against Hasselblad's 44x33 convention before any device use; until
-    // then every DOF number this controller produces is an estimate.
+    // Circle of confusion, 0.032 mm, chosen 2026-10-31: 44x33 diagonal
+    // (55 mm) / 1730, the Zeiss convention, superseding 0.025 mm, which was
+    // the 35 mm value (43 mm / 1730). No Hasselblad-official CoC figure was
+    // found, so this is convention-based, not vendor-confirmed.
     // Kept as one named constant so the decision lands in exactly one place.
-    readonly property real circleOfConfusionMm: 0.025
+    readonly property real circleOfConfusionMm: 0.032
     readonly property var fullStops: [1.4, 2, 2.8, 4, 5.6, 8, 11, 16, 22, 32]
     readonly property var distancePresets: [0.5, 1, 2, 3, 5, 10]
     readonly property var selectedProfile: profileById(selectedProfileId)
