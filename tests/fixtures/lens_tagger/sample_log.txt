@@ -1,0 +1,6 @@
+2026-10-27T08:00:00Z,zeiss-planar-80,2.8
+2026-10-27T09:30:00Z,zeiss-distagon-40,
+2026-10-27T11:00:00Z,zeiss-sonnar-150,4
+2026-10-27T12:00:00Z,not-a-real-lens,2.8
+garbage line with no commas
+2026-10-27T13:00:00Z,zeiss-planar-80,2.8
