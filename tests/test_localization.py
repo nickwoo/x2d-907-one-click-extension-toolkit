@@ -11,7 +11,7 @@ import windows_factory_usb as factory
 import windows_connection as driver
 D=Path(__file__).resolve().parents[1]/'src'
 CHINESE=re.compile('[\u3400-\u9fff]')
-CAMERA_SOURCES=('Bootstrap.qml','PlayMenuModel.qml','PlayPage.qml','AfcMenuController.qml','PrankIbisPage.qml')
+CAMERA_SOURCES=('Bootstrap.qml','PlayMenuModel.qml','PlayPage.qml','AfcMenuController.qml','PrankIbisPage.qml','X2dLensProfilePage.qml')
 
 class LanguageTests(unittest.TestCase):
     def assert_english(self,text): self.assertFalse(CHINESE.search(text),text)
@@ -93,6 +93,10 @@ class LanguageTests(unittest.TestCase):
         joined=''.join(sources.values())
         expected={chinese:1 for chinese,_ in LABELS if chinese not in ('自动亮度','显示屏最高亮度')}
         expected['耍起功能']=4
+        # Lens title / no-profile appear once in PlayPage (row / fallback)
+        # and once in the lens page itself (strTitle / strNoProfile).
+        expected['镜头配置文件']=2
+        expected['未选择镜头配置文件']=2
         for chinese,count in expected.items():
             self.assertEqual(joined.count(f'"{chinese}"'),count,chinese)
         english={name:english_qml(text) for name,text in sources.items()}

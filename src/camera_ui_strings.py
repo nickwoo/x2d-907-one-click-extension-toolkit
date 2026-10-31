@@ -11,6 +11,24 @@ LABELS = (
     ('可选择低、中、高三档加速，切换后立即生效。', 'Choose Low, Medium or High; changes take effect immediately.'),
 
     ('耍起功能', 'Tweaks'),
+    # Lens profile page (X2dLensProfilePage.qml, Phase 2 integration).
+    # The Simplified Chinese strings are the QML base; these pairs drive
+    # the English overlay, and src/translations_zh_hant.json drives the
+    # Traditional Chinese overlay via traditional_qml().
+    ('镜头配置文件', 'Lens profile'),
+    ('返回', 'Back'),
+    ('主开关', 'Master'),
+    ('开', 'On'),
+    ('关', 'Off'),
+    ('光圈', 'Aperture'),
+    ('对焦距离', 'Focus distance'),
+    ('超焦距', 'Hyperfocal'),
+    ('近点', 'Near'),
+    ('远点', 'Far'),
+    ('景深', 'Depth'),
+    ('取景框线', 'Frame lines'),
+    ('未选择镜头配置文件', 'No lens profile selected'),
+    ('状态', 'Status'),
     ('开启 AF-C', 'Enable AF-C'),
     ('对焦加速', 'Focus Speed Boost'),
     ('在亮度菜单中加入自动亮度', 'Add Auto Brightness to Menu'),

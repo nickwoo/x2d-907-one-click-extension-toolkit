@@ -1,25 +1,25 @@
 import QtQuick
-// Lens profile picker page (Phase 1, source only). Plain QtQuick items only:
-// the stock MenuHeader/row components are camera-side imports unavailable
-// offline, so this page is self-contained and instantiable directly, like
-// PrankIbisPage is instantiated by its route. Swapping these plain rows for
-// stock components is part of the wiring follow-up, as is registering this
-// page in the Tweaks row list (which would require editing existing
-// navigation files and is deliberately NOT done in this change set).
+// Lens profile picker page. Plain QtQuick items only: the stock
+// MenuHeader/row components are camera-side imports unavailable offline,
+// so this page is self-contained and instantiable directly, like
+// PrankIbisPage is instantiated by its route. It is registered in the
+// Tweaks row list in PlayPage.qml (settingsColumn), which opens it in a
+// Loader overlay; see PlayPage.lensProfileOpen.
 //
-// Internationalization note: user-visible strings are centralized as str*
-// properties in English. The repo's per-language overlay mechanism (base
-// QML in Simplified Chinese + generated en/zh-Hant overlays via
-// src/camera_ui_strings.py) requires editing that existing file, which this
-// change set forbids, so the follow-up is mechanical: convert these
-// properties to the Simplified Chinese base, add LABELS pairs, and regenerate
-// the overlays at build time. Do not ship this page as translated until
-// that follow-up is done.
+// Internationalization: user-visible strings are centralized as str*
+// properties in Simplified Chinese, the repo base language. The English
+// and Traditional Chinese overlays are generated at build time by
+// src/camera_ui_strings.py (LABELS pairs) via build_native_preload.py /
+// build_stable_speed.py, exactly like the other camera pages. Do not add
+// a user-visible string here without a LABELS pair and a catalog entry
+// in src/translations_zh_hant.json.
 //
-// On-camera profile loading is a build-time integration item: the route or
-// the loopback server shim must feed the baked
-// /system/etc/X2dLensProfiles.json text into lensController.loadProfiles().
-// QML here performs no direct file read.
+// On-camera profile loading is a build-time integration item, done by
+// src/build_lens_profile_bundle.py: it bakes the
+// /system/etc/X2dLensProfiles.json text into PlayPage's
+// lensProfilesJsonText property, which the Loader feeds into
+// lensController.loadProfiles() on load. QML here performs no direct
+// file read.
 FocusScope {
     id: root
     objectName: "X2dLensProfilePageRoot"
@@ -30,21 +30,21 @@ FocusScope {
     signal backRequested()
     readonly property alias lensController: controller
     X2dLensProfileController { id: controller }
-    // Centralized user-visible strings (English base; see note above).
-    readonly property string strTitle: "Lens profile"
-    readonly property string strBack: "Back"
-    readonly property string strMaster: "Master"
-    readonly property string strMasterOn: "On"
-    readonly property string strMasterOff: "Off"
-    readonly property string strAperture: "Aperture"
-    readonly property string strDistance: "Focus distance"
-    readonly property string strHyperfocal: "Hyperfocal"
-    readonly property string strNear: "Near"
-    readonly property string strFar: "Far"
-    readonly property string strDepth: "Depth"
-    readonly property string strFrameLines: "Frame lines"
-    readonly property string strNoProfile: "No lens profile selected"
-    readonly property string strStatus: "Status"
+    // Centralized user-visible strings (Simplified Chinese base; see note above).
+    readonly property string strTitle: "镜头配置文件"
+    readonly property string strBack: "返回"
+    readonly property string strMaster: "主开关"
+    readonly property string strMasterOn: "开"
+    readonly property string strMasterOff: "关"
+    readonly property string strAperture: "光圈"
+    readonly property string strDistance: "对焦距离"
+    readonly property string strHyperfocal: "超焦距"
+    readonly property string strNear: "近点"
+    readonly property string strFar: "远点"
+    readonly property string strDepth: "景深"
+    readonly property string strFrameLines: "取景框线"
+    readonly property string strNoProfile: "未选择镜头配置文件"
+    readonly property string strStatus: "状态"
     function readoutText() {
         var c = controller
         if (c.selectedProfile === null) return strNoProfile

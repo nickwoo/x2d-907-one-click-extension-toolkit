@@ -24,9 +24,24 @@ FocusScope {
     signal backRequested()
 
     property bool speedMenuOpen: false
+    // Lens profile page state (Phase 2 integration). The row in
+    // settingsColumn below opens the lens page in a Loader overlay, the
+    // same shape as speedMenu. lensProfilesJsonText is empty in source;
+    // build_lens_profile_bundle.py bakes the /system/etc/
+    // X2dLensProfiles.json text into it in the payload copy, and the
+    // Loader feeds it into lensController.loadProfiles() on load. QML
+    // performs no direct file read.
+    property bool lensProfileOpen: false
+    property string lensProfilesJsonText: ""
     function requestBack() {
+        if (lensProfileOpen) { lensProfileOpen = false; return }
         if (speedMenuOpen) { speedMenuOpen = false; return }
         backRequested()
+    }
+    function requestLensProfile() {
+        if (!pageActive) return false
+        lensProfileOpen = true
+        return true
     }
     function speedLabel(level) { return level === "low" ? "低" : level === "high" ? "高" : "中" }
     function requestSpeedMenu() {
@@ -35,8 +50,10 @@ FocusScope {
         speedMenuOpen = true
         return true
     }
-    onPageActiveChanged: if (!pageActive) speedMenuOpen = false
+    onPageActiveChanged: if (!pageActive) { speedMenuOpen = false; lensProfileOpen = false }
     onMasterEnabledChanged: if (!masterEnabled) speedMenuOpen = false
+    // Lens page keeps its own master gate (see X2dLensProfilePage), so
+    // master-off does not close it, only the Tweaks master row does.
     onFeatureLoadedChanged: if (!featureLoaded) speedMenuOpen = false
     Connections {
         target: root.featureController
@@ -68,6 +85,14 @@ FocusScope {
         return brightness.toggleFeature()
     }
 
+    function lensProfileValueText() {
+        // The lens controller only exists while its Loader is active, so
+        // report an empty value (not a stale name) when the page is closed.
+        if (!lensProfileOpen || lensLoader.item === null) return ""
+        var selected = lensLoader.item.lensController.selectedProfile
+        return selected !== null ? selected.name : "未选择镜头配置文件"
+    }
+
     Rectangle { anchors.fill: parent; color: Constants.menuBackgroundColor }
 
     StockMenu.MenuHeader {
@@ -90,7 +115,7 @@ FocusScope {
         anchors.left: parent.left
         anchors.right: parent.right
         clip: true
-        enabled: !root.speedMenuOpen
+        enabled: !root.speedMenuOpen && !root.lensProfileOpen
         interactive: root.pageActive && contentHeight > height
         boundsBehavior: Flickable.StopAtBounds
         contentWidth: width
@@ -266,6 +291,27 @@ FocusScope {
                 }
             }
 
+            Item {
+                objectName: "X2dPlayLensProfileRow"
+                width: parent.width
+                height: Constants.menuListItemDefaultHeight
+                StockComponents.TextValueRow {
+                    anchors.left: parent.left; anchors.right: parent.right
+                    anchors.leftMargin: Constants.settingsMenuSettingLeftMargin
+                    anchors.rightMargin: Constants.settingsMenuSettingRightMargin
+                    anchors.verticalCenter: parent.verticalCenter
+                    pixelSize: Constants.settingsMenuSettingSwitchFontSize
+                    text: "镜头配置文件"
+                    valueText: root.lensProfileValueText()
+                    enabled: root.pageActive
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    enabled: root.pageActive
+                    onClicked: root.requestLensProfile()
+                }
+            }
+
             Item { width: parent.width; height: Math.max(0, settingsList.height * 0.35) }
         }
     }
@@ -315,6 +361,28 @@ FocusScope {
         visible: active
         sourceComponent: speedMenuComponent
         onLoaded: item.forceActiveFocus()
+    }
+    Loader {
+        id: lensLoader
+        objectName: "X2dLensProfileLoader"
+        anchors.fill: parent
+        z: 100
+        active: root.lensProfileOpen
+        visible: active
+        sourceComponent: lensProfileComponent
+        onLoaded: {
+            item.forceActiveFocus()
+            if (root.lensProfilesJsonText !== "")
+                item.lensController.loadProfiles(root.lensProfilesJsonText)
+        }
+    }
+    Component {
+        id: lensProfileComponent
+        X2dLensProfilePage {
+            anchors.fill: parent
+            showing: true
+            onBackRequested: root.lensProfileOpen = false
+        }
     }
     Component {
         id: speedMenuComponent

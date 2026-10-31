@@ -125,21 +125,19 @@ check("page has backRequested", "backRequested" in page_text)
 check("page imports QtQuick only (offline loadable)",
       "com.hasselblad" not in page_code and "qrc:/app" not in page_code)
 check("page strings centralized", "strTitle" in page_text and "strHyperfocal" in page_text)
-check("page documents i18n gap", "Internationalization note" in page_text)
+check("page is Simplified Chinese base, not English",
+      '"镜头配置文件"' in page_text and '"Lens profile"' not in page_code)
+check("page documents i18n mechanism",
+      "camera_ui_strings" in page_text and "LABELS" in page_text)
 
-# Scope: only the five new files may differ from the checkout.
-try:
-    out = subprocess.run(["git", "-C", str(D), "status", "--porcelain"],
-                         capture_output=True, text=True, timeout=30).stdout
-    changed = [ln for ln in out.splitlines() if ln.strip()]
-    expected = {"src/X2dLensProfiles.json", "src/X2dLensProfileController.qml",
-                "src/X2dLensProfilePage.qml", "src/lens-profile-worker.sh",
-                "tests/check_lens_qml.py"}
-    actual = {ln[3:].strip() for ln in changed}
-    check("only the five new files are untracked, nothing modified",
-          actual == expected and all(ln.startswith("??") for ln in changed), out)
-except (OSError, subprocess.SubprocessError):
-    print("SKIP git scope check (git unavailable)")
+# Scope (Phase 2): the five Phase 1 files must still be present and
+# unrenamed; integration edits to existing files are expected now, so
+# the Phase 1 "only five untracked files" gate is retired here (the
+# integration test suite asserts the exact wiring instead).
+for _name in ("src/X2dLensProfiles.json", "src/X2dLensProfileController.qml",
+              "src/X2dLensProfilePage.qml", "src/lens-profile-worker.sh",
+              "tests/check_lens_qml.py"):
+    check("Phase 1 file still present: " + _name, (D / _name).exists())
 
 # Worker functional test in a sandbox (paths rewritten to temp dirs only).
 with tempfile.TemporaryDirectory(prefix="lens-worker-") as tmp:
@@ -400,8 +398,8 @@ qcheck("log text received", "zeiss-planar-80" in root.property("ctrlLogText"))
 
 # Page readout renders the DOF block.
 flip("readoutTrigger")
-wait(lambda: "Hyperfocal" in (root.property("readout") or ""), "readout")
-qcheck("page readout renders", "Hyperfocal" in root.property("readout"))
+wait(lambda: "超焦距" in (root.property("readout") or ""), "readout")
+qcheck("page readout renders", "超焦距" in root.property("readout"))
 
 root.deleteLater()
 app.processEvents()
