@@ -69,8 +69,8 @@ coc_match = re.search(r"circleOfConfusionMm\s*:\s*([0-9.]+)", controller_text)
 check("CoC constant parseable from controller", coc_match is not None)
 COC = float(coc_match.group(1)) if coc_match else 0.025
 check("CoC in sane range", 0 < COC < 0.1)
-check("CoC marked PROVISIONAL with confirmation requirement",
-      "PROVISIONAL" in controller_text and "MUST be confirmed" in controller_text)
+check("CoC documented with its basis",
+      "0.032" in controller_text and "1730" in controller_text)
 
 
 def hyper(f, n):
